@@ -12,7 +12,7 @@ console.log(lines.length);
 
 // input data shape
 const firstDataSunRise = 19;
-const firstDataSunSet = 56;
+const firstDataSunSet = 55;
 const dataColumns = 13;
 
 const dayFraction = (thisParticularDay, firstOfTheYear) => {
@@ -24,34 +24,52 @@ const dayFraction = (thisParticularDay, firstOfTheYear) => {
 const yearRow = lines[14].split(' ');
 const theYear = yearRow[3]; 
 const firstOfTheYear = new Date(theYear, 0, 0);
-// console.log(firstOfTheYear.toISOString());
-let sorted = [];
+console.log(firstOfTheYear.toISOString());
+let sortedRise = [];
 let si = 0;
 for (let r = firstDataSunRise; r < firstDataSunRise+31; r++) {
     const row = lines[r].split('\t');
     if (row) {
-        ///const theDate = Date.parse(`${row[0]}-${row[2]}`);
-        ///const thisParticularDay = new Date(theDate);
-        for (let m = 1; m < 13; m++) {
-            if(row[m])
-                sorted[si++] = [(m*100)+parseInt(row[0], 10), `${theYear}/${m}/${row[0]}`, row[m]];
+        for (let m = 1; m <= 12; m++) {
+            if(row[m]) {
+                const theDate = Date.parse(`${theYear}/${m}/${row[0]}-${row[m]} AM`);
+                thisParticularDay = new Date(theDate);
+                df = dayFraction(thisParticularDay, firstOfTheYear);
+                // (m*100)+parseInt(row[0], 10)
+                sortedRise[si++] = [df, `${theYear}/${m}/${row[0]}`, row[m], "R"];
+            }
         }
     }
 }
-sorted.sort((a, b)=>a[0]>b[0]?1:-1);
-console.log(sorted)
+for (let r = firstDataSunSet; r < firstDataSunSet+31; r++) {
+    const row = lines[r].split('\t');
+    if (row) {
+        for (let m = 1; m <= 12; m++) {
+            if(row[m]) {
+                const theDate = Date.parse(`${theYear}/${m}/${row[0]}-${row[m]}`);
+                thisParticularDay = new Date(theDate);
+                df = dayFraction(thisParticularDay, firstOfTheYear);
+                console.log(df);
+                // (m*100)+parseInt(row[0], 10)
+                sortedRise[si++] = [df, `${theYear}/${m}/${row[0]}`, row[m], "S"];
+            }
+        }
+    }
+}
+sortedRise.sort((a, b)=>a[0]>b[0]?1:-1);
 
 stream.write("[");
 let rowSep = "\r\n";
-for (let r = 0; r < sorted.length; r++) {
-    const row = sorted[r];
+for (let r = 0; r < sortedRise.length; r++) {
+    const row = sortedRise[r];
     if (row) {
         const theDate = Date.parse(`${row[0]}-${row[2]}`);
         const thisParticularDay = new Date(theDate);
         stream.write(rowSep + "[" + 
-        // dayFraction(thisParticularDay, firstOfTheYear) + ", " + 
+        row[0] + ', ' +  
         '"' + row[1] + '", ' + 
-        '"' + row[2] + '"' + 
+        '"' + row[2] + '", ' + 
+        '"' + row[3] + '"' + 
         "]");
         rowSep = ",\r\n";
     }

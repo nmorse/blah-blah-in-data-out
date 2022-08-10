@@ -36,7 +36,7 @@ for (let r = firstDataSunRise; r < firstDataSunRise+31; r++) {
                 thisParticularDay = new Date(theDate);
                 df = dayFraction(thisParticularDay, firstOfTheYear);
                 // (m*100)+parseInt(row[0], 10)
-                sortedRise[si++] = [df, `${theYear}/${m}/${row[0]}`, row[m], "R"];
+                sortedRise[si++] = [df, `${theYear}/${m}/${row[0]}`, row[m], "R", `${thisParticularDay.toString()}`];
             }
         }
     }
@@ -51,7 +51,7 @@ for (let r = firstDataSunSet; r < firstDataSunSet+31; r++) {
                 df = dayFraction(thisParticularDay, firstOfTheYear);
                 console.log(df);
                 // (m*100)+parseInt(row[0], 10)
-                sortedRise[si++] = [df, `${theYear}/${m}/${row[0]}`, row[m], "S"];
+                sortedRise[si++] = [df, `${theYear}/${m}/${row[0]}`, row[m], "S", `${thisParticularDay.toString()}`];
             }
         }
     }
@@ -69,7 +69,8 @@ for (let r = 0; r < sortedRise.length; r++) {
         row[0] + ', ' +  
         '"' + row[1] + '", ' + 
         '"' + row[2] + '", ' + 
-        '"' + row[3] + '"' + 
+        '"' + row[3] + '", ' + 
+        '"' + row[4].split(' ').slice(0, 3).join(' ') + '"' + 
         "]");
         rowSep = ",\r\n";
     }
